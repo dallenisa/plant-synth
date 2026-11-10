@@ -1,0 +1,26 @@
+# bowl_settings.txt -- settings for bowl_resonator.py (keep it next to the script)
+# Edit, save, then apply with:   sudo systemctl restart plantbowl
+# Anything after # is a comment. Delete a line to go back to its default.
+
+# --- how the plant drives the sound ------------------------------------------
+sensitivity = 1.0      # how easily touches register. Higher catches lighter touches but also
+                       # adds strikes when nobody touches the plant (simulated with a leaf as noisy
+                       # as the one this was tuned on: 1.0 ~1/hour, 1.2 ~7, 1.4 ~30, 1.8 ~2/minute)
+smoothing = 2.0        # seconds of smoothing on the slow tone changes: higher = steadier
+
+# --- the bowl -----------------------------------------------------------------
+hum = 0.1              # resting level of the bowl's hum: 0 = silent until touched ... 0.3 = steady drone
+brightness = 0.40      # 0 = dark and warm ... 1 = bright and shimmery (overtone balance)
+resonance = 20         # seconds the main bowl rings after being struck (8 short ... 40 very long)
+root = 50              # pitch of preset 1 and the octave of presets 2-6, as a MIDI note:
+                       # 50 = D3, 55 = G3, 57 = A3 (easier on small speakers), 60 = C4
+pitch_drift = 6        # cents of gentle pitch movement with the plant (0 = perfectly fixed pitch)
+
+# --- percussion -----------------------------------------------------------------
+strike_density = 0.35  # 0 = no mallet strikes ... 1 = most frequent; also sets how closely strikes
+                       # can follow each other while the plant is being handled
+wood = 0.4             # level of the rare muted wooden touches (0 = none)
+
+# --- space and level ----------------------------------------------------------
+reverb = 0.25          # 0 = dry ... 0.6 = very spacious
+volume = 0             # dB: +6 or +10 if too quiet, -6 if too loud (a limiter prevents clipping)

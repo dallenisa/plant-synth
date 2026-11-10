@@ -1,0 +1,16 @@
+# Singing-bowl engine. Change "plantsynth" to your Pi username if it differs.
+# Install:  sudo cp plantbowl.service /etc/systemd/system/
+#           sudo systemctl daemon-reload && sudo systemctl enable --now plantbowl
+[Unit]
+Description=Plant singing bowl
+After=sound.target
+
+[Service]
+User=plantsynth
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/home/plantsynth/mushroom/bin/python /home/plantsynth/bowl_resonator.py --device plughw:CARD=Headphones
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

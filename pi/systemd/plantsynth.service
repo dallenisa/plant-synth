@@ -1,0 +1,17 @@
+# Classic engine (MIDI notes through FluidSynth). Change "plantsynth" to your Pi username if it differs.
+# Install:  sudo cp plantsynth.service /etc/systemd/system/
+#           sudo systemctl daemon-reload && sudo systemctl enable --now plantsynth
+# Run only one engine at a time -- both use the sound card.
+[Unit]
+Description=Plant music synth
+After=sound.target
+
+[Service]
+User=plantsynth
+Environment=PYTHONUNBUFFERED=1
+ExecStart=/home/plantsynth/mushroom/bin/python /home/plantsynth/mushroom_synth.py --device plughw:CARD=Headphones --gain 1.5
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

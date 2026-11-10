@@ -1,0 +1,8 @@
+# generated SoundFont (make it with: python3 pi/make_bowls.py bowls.sf2)
+*.sf2
+# renders, recordings and logs
+*.wav
+*.mp3
+*.csv
+__pycache__/
+*.pyc

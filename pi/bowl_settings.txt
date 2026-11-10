@@ -3,9 +3,9 @@
 # Anything after # is a comment. Delete a line to go back to its default.
 
 # --- how the plant drives the sound ------------------------------------------
-sensitivity = 1.0      # how easily touches register. Higher catches lighter touches but also
-                       # adds strikes when nobody touches the plant (simulated with a leaf as noisy
-                       # as the one this was tuned on: 1.0 ~1/hour, 1.2 ~7, 1.4 ~30, 1.8 ~2/minute)
+sensitivity = 1.0      # how strongly touches swell the bowl and how small a touch can strike (1 ... 3).
+                       # Safe to raise: thresholds never go below the plant's own resting noise, so
+                       # higher values don't add hum or strikes when nobody touches the plant
 smoothing = 2.0        # seconds of smoothing on the slow tone changes: higher = steadier
 
 # --- the bowl -----------------------------------------------------------------

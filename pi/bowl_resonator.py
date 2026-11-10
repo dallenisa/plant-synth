@@ -120,8 +120,10 @@ class InputTracker:
         self.strikes_on = d > 0
         # thresholds in multiples of the plant's own everyday change (its noise never
         # exceeds about 6 on this scale, whatever its absolute size)
-        self.t_hi = 7.0                         # a smaller but real change: occasional soft strike
-        self.t_strong = 10.0                    # a clear touch (a dip of ~10% or more): answered at once
+        # Sensitivity lowers them, but never below the noise ceiling, so a high setting
+        # catches lighter touches without the plant's own jitter setting off strikes.
+        self.t_hi = max(6.6, 7.0 / self.sens)          # a smaller but real change: occasional soft strike
+        self.t_strong = max(7.2, 10.0 / self.sens)     # a clear touch: answered at once
         self.t_lo = 2.0                         # must calm below this to re-arm
         self.min_gap = 60.0 / (1 + 7 * d) if d > 0 else 1e9   # for smaller (non-touch) changes
         self.strong_gap = 1.5 + 3.0 * (1 - d)                 # between strikes answering clear touches
@@ -193,7 +195,7 @@ class InputTracker:
         if abs(j) < 2.5 * self.jump_scale or not settled:
             self.jump_scale += ema(dt, 120.0 if settled else 6.0) * (min(abs(j), 4 * self.jump_scale) - self.jump_scale)
         self.jump_scale = max(self.jump_scale, 0.0002)
-        movement = self.sens * abs(j) / self.jump_scale
+        movement = abs(j) / self.jump_scale        # in units of everyday noise (sensitivity applies later)
         self.act += ema(dt, 1.0) * (min(movement, 30.0) - self.act)        # any change brightens/swells
         # strikes listen for *sudden* changes: the step minus its own recent trend. A touch is
         # abrupt; the slow recovery afterwards is a steady trend, so the next touch still stands out.
@@ -202,7 +204,7 @@ class InputTracker:
         if abs(innov) < 2.5 * self.innov_scale or not settled:
             self.innov_scale += ema(dt, 120.0 if settled else 6.0) * (min(abs(innov), 4 * self.innov_scale) - self.innov_scale)
         self.innov_scale = max(self.innov_scale, 0.0002)
-        self.ratio = self.sens * abs(innov) / self.innov_scale
+        self.ratio = abs(innov) / self.innov_scale
         j = innov
         self.ratio_s += ema(dt, 0.25) * (self.ratio - self.ratio_s)
 
@@ -260,7 +262,9 @@ class InputTracker:
         if t - self.last_data > self.LOST_AFTER:
             self.connected = False
         # 0 = everyday noise ... 1 = the plant is being handled (a dead zone ignores ordinary wobble)
-        moving = math.tanh(max(0.0, self.act - 2.0) / 4.0) if self.connected else 0.0
+        # everyday noise sits below the gate whatever the sensitivity; sensitivity scales how
+        # strongly real movement above it swells the bowl
+        moving = math.tanh(self.sens * max(0.0, self.act - 2.0) / 4.0) if self.connected else 0.0
         if self.connected:
             target = min(1.0, self.hum + (1.0 - self.hum) * moving + 0.08 * abs(self.zt) * min(1.0, self.hum / 0.3))
         else:

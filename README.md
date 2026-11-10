@@ -167,7 +167,7 @@ noise; `rub` = how hard the bowl is being "rubbed" (0-1); `cpu` = share of one P
 
 | Setting | Default | What it does |
 |---|---|---|
-| `sensitivity` | 1.0 | How easily touches register. Higher = lighter touches, but more strikes by themselves (see FAQ) |
+| `sensitivity` | 1.0 | How strongly touches swell the bowl and how small a touch can strike (1–3). Safe to raise: it never drops below the plant's own noise (see FAQ) |
 | `smoothing` | 2.0 | Seconds of smoothing on slow tone changes |
 | `hum` | 0.1 | Resting hum level: 0 = silent until touched, 0.3 = steady drone |
 | `brightness` | 0.40 | 0 dark/warm … 1 bright/shimmery |
@@ -248,21 +248,24 @@ pull on the leaf.
 The board has older firmware. Copy the current `mushroom.mpy` to CIRCUITPY.
 
 **There's a constant bowl sound.**
-Lower `hum` (0 = silent until the plant is touched).
+Lower `hum` (0 = silent until the plant is touched). If it started after raising `sensitivity`,
+update `bowl_resonator.py`: older versions let the plant's resting noise through at higher settings.
 
-**Touches aren't sensitive enough, or the bowl strikes when nobody touches it.**
-`sensitivity` trades one for the other. Measured in simulation, with a leaf whose reading wobbles
-about ±0.02 at rest (touches answered by a strike, out of 10, by how much they dip the reading):
+**Touches aren't sensitive enough.**
+Raise `sensitivity` (1 to 3). Touches then swell the bowl more and smaller touches can strike it. The
+engine never sets its thresholds below the noise it learns from the plant at rest, so a higher value
+doesn't add hum or strikes when nobody is touching. Measured in simulation, with a leaf whose reading
+wobbles about ±0.02 at rest and `hum = 0.1`:
 
-| `sensitivity` | strikes with nobody touching | 5% dip | 7% dip | 10% dip | 15% dip |
-|---|---|---|---|---|---|
-| 1.0 | about 1 per hour | 0 | 6 | 7 | 10 |
-| 1.2 | about 7 per hour | 3 | 6 | 8 | 10 |
-| 1.4 | about 30 per hour | 4 | 9 | 10 | 10 |
-| 1.8 | about 2 per minute | 8 | 8 | 9 | 10 |
+| `sensitivity` | bowl level at rest | swell from a touch that dips the reading 5% / 7% / 10% | strikes per 10 touches that dip 7% / 10% / 15% | strikes with nobody touching |
+|---|---|---|---|---|
+| 1 | 0.12 | 0.30 / 0.44 / 0.61 | 2 / 8 / 10 | about 2 per hour |
+| 2 | 0.14 | 0.45 / 0.65 / 0.82 | 2 / 9 / 10 | about 2 per hour |
+| 3 | 0.15 | 0.56 / 0.77 / 0.90 | 2 / 9 / 10 | about 2 per hour |
 
-Even without a strike, any touch brightens the bowl and brings in the second bowl. Less noise at the
-contacts (damp, still, away from power cables) helps more than raising sensitivity.
+Levels run from 0 (silent) to 1 (full). Touches that move the reading less than the plant's own noise
+can't be told apart from it at any setting, so they swell the bowl without striking it. Less noise at
+the contacts (damp, still, away from power cables) makes lighter touches register.
 
 **The buttons don't change the sound.**
 They change presets in both engines (see the table above). Check the log shows `Preset N: ...` when you

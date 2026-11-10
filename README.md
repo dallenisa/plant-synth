@@ -297,3 +297,10 @@ Inspired by [PlantWave](https://plantwave.com) and the open-source
 [Biodata Sonification](https://www.tindie.com/products/e4progress/biodata-sonification-midi-interface-arduino-shield/)
 project by Electricity for Progress, whose design measures the plant with a 555 timer
 (more sensitive than the voltage divider used here).
+
+---
+
+## License
+
+Released under the [MIT License](LICENSE): free to use, modify and share, as long as the copyright
+notice is kept.
